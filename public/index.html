@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MyDrive</title>
+<style>
+:root{--bg:#f5f7fb;--card:#fff;--tx:#18202f;--mut:#6b7587;--bd:#e2e7f0;--ac:#2f6bff;--ac2:#e8efff;--dan:#e5484d}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1420;--card:#171e2e;--tx:#e8ecf5;--mut:#8b96ab;--bd:#263047;--ac:#5b8cff;--ac2:#1d2a4a}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.app{display:flex;min-height:100vh}
+aside{width:250px;background:var(--card);border-right:1px solid var(--bd);padding:18px 12px;flex-shrink:0}
+.logo{font-weight:700;font-size:18px;padding:4px 10px 12px}
+.who{margin:0 6px 10px;padding:10px;border-radius:10px;background:var(--ac2);font-size:13px}.who b{display:block}
+.who a{color:var(--ac);cursor:pointer}
+.nav{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;border:0;background:none;color:var(--tx);border-radius:10px;cursor:pointer;font:inherit;text-align:left;text-decoration:none}
+.nav:hover,.nav.on{background:var(--ac2)}.nav.on{color:var(--ac);font-weight:600}.nav .n{margin-left:auto;font-size:12px;color:var(--mut)}
+.sec{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);padding:14px 12px 6px}
+main{flex:1;padding:24px;min-width:0}
+h1{margin:0 0 4px;font-size:22px}.sub{color:var(--mut);margin:0 0 16px}
+.bar{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+.tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+input,select{font:inherit;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:8px 10px}
+.btn{background:var(--ac);color:#fff;border:0;border-radius:10px;padding:9px 16px;font:inherit;cursor:pointer}
+.btn.g{background:var(--ac2);color:var(--ac)}.btn.d{background:#fde8e9;color:var(--dan)}.btn.s{padding:5px 10px;font-size:13px}
+.drop{border:2px dashed var(--bd);border-radius:16px;background:var(--card);padding:30px 16px;text-align:center;cursor:pointer;margin-bottom:6px}
+.drop.over,.drop:hover{border-color:var(--ac);background:var(--ac2)}.drop span{color:var(--mut)}
+.update{display:flex;gap:8px;align-items:center;margin:10px 0;flex-wrap:wrap;color:var(--mut)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:14px}
+.it{background:var(--card);border:1px solid var(--bd);border-radius:12px;overflow:hidden;position:relative}
+.it .th{aspect-ratio:1;background:var(--ac2);cursor:pointer}.it img{width:100%;height:100%;object-fit:cover;display:block}
+.it .m{padding:8px 10px;font-size:12px}.it .m div:first-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}.it .m div+div{color:var(--mut)}
+.act{position:absolute;top:6px;right:6px;display:flex;gap:4px;opacity:0}.it:hover .act{opacity:1}@media (hover:none){.act{opacity:1}}
+.ib{background:rgba(0,0,0,.6);color:#fff;border:0;border-radius:8px;width:28px;height:28px;cursor:pointer}
+.empty{text-align:center;color:var(--mut);padding:50px 10px;grid-column:1/-1}
+.chip{background:var(--ac2);color:var(--ac);padding:3px 10px;border-radius:99px;font-size:12px;white-space:nowrap}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:12px}.cal .h{text-align:center;color:var(--mut);font-size:12px}
+.day{aspect-ratio:1;background:var(--card);border:1px solid var(--bd);border-radius:10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;font:inherit;color:var(--tx);padding:2px}
+.day.has{background:var(--ac2);border-color:var(--ac)}.day.td{outline:2px solid var(--ac)}.day small{font-size:11px;color:var(--ac)}.day.blank{visibility:hidden}
+.tw{overflow-x:auto}table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--bd)}
+td,th{padding:10px 12px;text-align:left;border-bottom:1px solid var(--bd);white-space:nowrap}th{color:var(--mut);font-size:12px;text-transform:uppercase}
+.box{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:16px;margin-bottom:16px}
+#login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+#login .box{width:100%;max-width:340px;display:flex;flex-direction:column;gap:10px}
+.er{color:var(--dan);font-size:13px;min-height:18px}
+#lb{position:fixed;inset:0;background:rgba(0,0,0,.9);display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;z-index:9;padding:20px;color:#fff}
+#lb img{max-width:100%;max-height:85%;border-radius:8px}
+#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#111;color:#fff;padding:10px 16px;border-radius:10px;display:none;z-index:10}
+@media(max-width:760px){.app{flex-direction:column}aside{width:100%;border-right:0;border-bottom:1px solid var(--bd);display:flex;overflow-x:auto;gap:6px;padding:10px;align-items:center}
+.logo,.sec,.who{display:none}.nav{width:auto;white-space:nowrap}main{padding:16px}}
+</style>
+</head>
+<body>
+<div id="login" style="display:none"><div class="box"><div class="logo" style="padding:0">☁️ MyDrive</div>
+<input id="lu" placeholder="Username" autocomplete="username" autocapitalize="none"><input id="lp" type="password" placeholder="Password" autocomplete="current-password">
+<div class="er" id="le"></div><button class="btn" id="lg">Sign in</button></div></div>
+<div class="app" id="app" style="display:none"><aside id="side"></aside><main id="main"></main></div>
+<div id="lb"><img id="lbi" alt=""><div id="lbc"></div></div><div id="toast"></div>
+<script>
+const TB='https://1024terabox.com/s/1MVQMGbq8YdqYN2pdHBTlMA';
+const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pad=n=>String(n).padStart(2,'0'),dk=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const today=()=>dk(new Date()),fmt=b=>b>1048576?(b/1048576).toFixed(1)+' MB':Math.max(1,Math.round(b/1024))+' KB';
+let token=localStorage.getItem('tk')||'',me=null,photos=[],view={k:'upload'},scope='all',cal=new Date(),upDay=today(),usersList=[];
+const isAdmin=()=>me&&me.role==='admin';
+function toast(m){const t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>t.style.display='none',2800)}
+async function api(path,o={}){
+  const r=await fetch('/api/'+path,{...o,headers:{...(o.headers||{}),...(token?{Authorization:'Bearer '+token}:{})}});
+  let d={};try{d=await r.json()}catch(e){}
+  if(r.status===401&&path!=='login'){logout();throw new Error('Session expired')}
+  if(!r.ok)throw new Error(d.error||'Request failed');return d}
+const post=(p,b)=>api(p,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)});
+const imgUrl=p=>'/api/img/'+p.id+'?t='+encodeURIComponent(token);
+function logout(){token='';me=null;localStorage.removeItem('tk');showLogin()}
+function showLogin(){$('#app').style.display='none';$('#login').style.display='flex'}
+$('#lg').onclick=async()=>{$('#le').textContent='';
+  try{const d=await post('login',{username:$('#lu').value.trim(),password:$('#lp').value});token=d.token;localStorage.setItem('tk',token);me=d.user;$('#lp').value='';await start()}
+  catch(e){$('#le').textContent=e.message}};
+$('#lp').onkeydown=e=>{if(e.key==='Enter')$('#lg').click()};
+async function start(){$('#login').style.display='none';$('#app').style.display='flex';await load();render()}
+async function load(){try{photos=(await api('photos')).photos;if(isAdmin())usersList=(await api('users')).users}catch(e){toast(e.message)}}
+async function init(){
+  if(!token)return showLogin();
+  try{me=(await api('me')).user;await start()}catch(e){showLogin()}}
+const visible=()=>isAdmin()&&scope!=='all'?photos.filter(p=>p.owner===scope):photos;
+const byDay=l=>l.reduce((m,p)=>(m[p.day]=(m[p.day]||0)+1,m),{});
+async function shrink(f){
+  const bmp=await createImageBitmap(f);let max=2560,q=.88;
+  for(let i=0;i<8;i++){const r=Math.min(1,max/Math.max(bmp.width,bmp.height)),c=document.createElement('canvas');
+    c.width=Math.round(bmp.width*r);c.height=Math.round(bmp.height*r);c.getContext('2d').drawImage(bmp,0,0,c.width,c.height);
+    const b=await new Promise(r=>c.toBlob(r,'image/jpeg',q));if(b.size<4*1048576)return b;q-=.08;max*=.85}
+  throw new Error('too large')}
+async function upload(files,day){
+  let ok=0;
+  for(const f of files){
+    if(!f.type.startsWith('image/')){toast('Skipped '+f.name+' (photos only)');continue}
+    try{toast('Uploading '+f.name+'…');const b=await shrink(f),t=new Date(),T=pad(t.getHours())+'-'+pad(t.getMinutes())+'-'+pad(t.getSeconds());
+      await api('upload?day='+day+'&time='+T+'&orig='+encodeURIComponent(f.name),{method:'POST',headers:{'Content-Type':'image/jpeg'},body:b});ok++}
+    catch(e){toast('Failed '+f.name+': '+e.message)}}
+  if(ok){toast(ok+' photo'+(ok>1?'s':'')+' saved to '+(day===today()?'today':day));await load();render()}}
+function pick(day){const i=document.createElement('input');i.type='file';i.accept='image/*';i.multiple=true;i.onchange=()=>upload([...i.files],day);i.click()}
+const canDel=p=>isAdmin()||p.owner===me.username;
+async function save(p){try{const b=await (await fetch(imgUrl(p))).blob(),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=p.name;document.body.appendChild(a);a.click();a.remove()}catch(e){toast('Download failed')}}
+function side(){
+  const v=visible(),n=v.filter(p=>p.day===today()).length;
+  const nav=(k,ic,l,c)=>`<button class="nav ${view.k===k?'on':''}" data-k="${k}">${ic} ${l}<span class="n">${c??''}</span></button>`;
+  $('#side').innerHTML=`<div class="logo">☁️ MyDrive</div><div class="who"><b>${esc(me.username)}</b>${isAdmin()?'Admin':'Member'} · <a id="cp">Password</a> · <a id="lo">Sign out</a></div><div class="sec">Folders</div>`+
+   nav('upload','📤','Upload',v.length)+nav('today','📅','Today\'s Photos',n)+nav('dates','🗓️','Browse by date','')+
+   `<div class="sec">TeraBox</div><a class="nav" href="${TB}" target="_blank" rel="noopener">🔗 Open TeraBox folder</a>`+(isAdmin()?`<div class="sec">Admin</div>`+nav('admin','🛡️','Users & access',usersList.length):'');
+  $('#lo').onclick=logout;
+  $('#cp').onclick=async()=>{const o=prompt('Current password:');if(o===null)return;const p=prompt('New password (min 4 characters):');if(!p)return;try{await post('password',{old:o,pw:p});toast('Password changed')}catch(e){toast(e.message)}};
+  document.querySelectorAll('.nav[data-k]').forEach(b=>b.onclick=()=>{view={k:b.dataset.k};render()})}
+function gridHTML(l){return `<div class="grid">`+(l.length?[...l].sort((a,b)=>b.ts-a.ts).map(p=>`<div class="it" data-id="${p.id}"><div class="th"><img loading="lazy" src="${imgUrl(p)}" alt=""></div>
+ <div class="act"><button class="ib" data-a="dl" title="Download">⬇</button>${canDel(p)?'<button class="ib" data-a="rm" title="Delete">✕</button>':''}</div>
+ <div class="m"><div>${esc(p.name)}</div><div>${esc(p.owner)} · ${p.day}</div></div></div>`).join(''):'<div class="empty">No photos here yet.</div>')+'</div>'}
+function bindGrid(l){document.querySelectorAll('.it').forEach(el=>{const p=l.find(x=>x.id===el.dataset.id);
+  el.querySelector('.th').onclick=()=>{$('#lbi').src=imgUrl(p);$('#lbc').textContent=p.name;$('#lb').style.display='flex'};
+  el.querySelector('[data-a=dl]').onclick=()=>save(p);
+  const r=el.querySelector('[data-a=rm]');if(r)r.onclick=async()=>{if(confirm('Delete '+p.name+'?'))try{await api('photo/'+p.id,{method:'DELETE'});await load();render()}catch(e){toast(e.message)}}})}
+function scopeSel(){return isAdmin()?`<select id="scope"><option value="all">All users</option>${usersList.map(u=>`<option value="${esc(u.username)}" ${scope===u.username?'selected':''}>${esc(u.username)}</option>`).join('')}</select>`:''}
+function monthHTML(v){
+  const y=cal.getFullYear(),mo=cal.getMonth(),first=new Date(y,mo,1).getDay(),n=new Date(y,mo+1,0).getDate(),c=byDay(v),t=today();
+  let h=['S','M','T','W','T','F','S'].map(x=>`<div class="h">${x}</div>`).join('')+'<div class="day blank"></div>'.repeat(first);
+  for(let d=1;d<=n;d++){const k=y+'-'+pad(mo+1)+'-'+pad(d);h+=`<button class="day ${c[k]?'has':''} ${k===t?'td':''}" data-day="${k}">${d}${c[k]?`<small>${c[k]}</small>`:''}</button>`}
+  return `<div class="tools"><button class="btn g" id="pm">‹</button><b>${cal.toLocaleString([], {month:'long',year:'numeric'})}</b><button class="btn g" id="nm">›</button></div><div class="cal">${h}</div>`}
+function render(){
+  if(!me)return;side();const v=visible(),m=$('#main'),k=view.k;let html='',l=[];
+  if(k==='upload'){l=v;
+    html=`<div class="bar"><div><h1>Upload</h1><p class="sub">Photos go into the folder for the date you pick.</p></div><div class="tools">${scopeSel()}</div></div>
+    <div class="update">Upload to date: <input type="date" id="upday" value="${upDay}"> <span class="chip">${upDay===today()?'Today':upDay}</span></div>
+    <div class="drop" id="drop"><div style="font-size:32px">☁️</div><b>Drop photos or tap to upload</b><br><span>Saved as ${esc(me.username)}_d-m-yyyy_hh-mm-ss.jpg</span></div>
+    <h3 style="margin:18px 0 0">${isAdmin()?'All uploads':'Your uploads'}</h3>${gridHTML(l)}`}
+  else if(k==='today'||k==='day'){const d=k==='today'?today():view.day;l=v.filter(p=>p.day===d);
+    html=`<div class="bar"><div><h1>${k==='today'?'Today\'s Photos':d}</h1><p class="sub">${k==='today'?d+' · ':''}${l.length} photo${l.length===1?'':'s'}</p></div>
+    <div class="tools">${scopeSel()}<button class="btn" id="upto">＋ Upload to ${d}</button></div></div>${gridHTML(l)}`}
+  else if(k==='dates'){
+    html=`<div class="bar"><div><h1>Browse by date</h1><p class="sub">Tap a day to open it. Numbers show photos per day.</p></div>
+    <div class="tools"><label class="chip" style="cursor:pointer">📆 Go to date <input type="date" id="jump" style="margin-left:6px;padding:3px 6px"></label>${scopeSel()}</div></div>${monthHTML(v)}`}
+  else if(k==='admin'){
+    html=`<h1>Users & access</h1><p class="sub">Add people, reset passwords, or remove access. Usernames are used in photo file names (e.g. 206).</p>
+    <div class="box"><b>Add user</b><div class="tools" style="margin-top:8px"><input id="nu" placeholder="Username (e.g. 206)" autocapitalize="none"><input id="np" placeholder="Password" type="text"><button class="btn" id="addu">Add user</button></div></div>
+    <div class="tw"><table><tr><th>User</th><th>Role</th><th>Photos</th><th>Size</th><th></th></tr>`+usersList.map(u=>`<tr><td>${esc(u.username)}</td><td>${u.role}</td><td>${u.photos}</td><td>${fmt(u.size)}</td><td>
+      <button class="btn g s" data-v="${esc(u.username)}">View</button> <button class="btn g s" data-r="${esc(u.username)}">Reset password</button>${u.username!==me.username?` <button class="btn d s" data-x="${esc(u.username)}">Delete</button>`:''}</td></tr>`).join('')+'</table></div>'}
+  m.innerHTML=html;const q=s=>m.querySelector(s);
+  if(k==='upload'||k==='today'||k==='day')bindGrid(l);
+  const sc=q('#scope');if(sc)sc.onchange=()=>{scope=sc.value;render()};
+  const j=q('#jump');if(j)j.onchange=()=>{if(j.value){view={k:'day',day:j.value};render()}};
+  const ud=q('#upday');if(ud)ud.onchange=()=>{upDay=ud.value||today();render()};
+  const dz=q('#drop');if(dz){dz.onclick=()=>pick(upDay);
+    ['dragover','dragenter'].forEach(e=>dz.addEventListener(e,ev=>{ev.preventDefault();dz.classList.add('over')}));
+    ['dragleave','drop'].forEach(e=>dz.addEventListener(e,ev=>{ev.preventDefault();dz.classList.remove('over')}));
+    dz.addEventListener('drop',ev=>upload([...ev.dataTransfer.files],upDay))}
+  const ut=q('#upto');if(ut)ut.onclick=()=>pick(k==='today'?today():view.day);
+  m.querySelectorAll('[data-day]').forEach(b=>b.onclick=()=>{view={k:'day',day:b.dataset.day};render()});
+  const pm=q('#pm');if(pm)pm.onclick=()=>{cal=new Date(cal.getFullYear(),cal.getMonth()-1,1);render()};
+  const nx=q('#nm');if(nx)nx.onclick=()=>{cal=new Date(cal.getFullYear(),cal.getMonth()+1,1);render()};
+  const au=q('#addu');if(au)au.onclick=async()=>{try{await post('users',{username:q('#nu').value.trim(),password:q('#np').value});toast('User added');await load();render()}catch(e){toast(e.message)}};
+  m.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>{scope=b.dataset.v;view={k:'upload'};render()});
+  m.querySelectorAll('[data-r]').forEach(b=>b.onclick=async()=>{const p=prompt('New password for '+b.dataset.r+' (min 4 characters):');if(!p)return;try{await post('users/'+encodeURIComponent(b.dataset.r)+'/password',{pw:p});toast('Password reset')}catch(e){toast(e.message)}});
+  m.querySelectorAll('[data-x]').forEach(b=>b.onclick=async()=>{if(!confirm('Delete user '+b.dataset.x+'? Their photos stay in the drive.'))return;try{await api('users/'+encodeURIComponent(b.dataset.x),{method:'DELETE'});await load();render()}catch(e){toast(e.message)}});
+}
+$('#lb').onclick=()=>$('#lb').style.display='none';
+init();
+</script>
+</body>
+</html>
